@@ -1,0 +1,276 @@
+Connected to Dynamips VM "R1" (ID 1, type c7200) - Console port
+Press ENTER to get the prompt.
+own
+ duplex auto
+ speed auto
+!
+ip classless
+no ip http server
+no ip http secure-server
+!
+!
+!
+no cdp log mismatch duplex
+ --More--         !
+!
+!
+!
+control-plane
+!
+!
+!
+!
+!
+!
+gatekeeper
+ shutdown
+!
+!
+line con 0
+ exec-timeout 0 0
+ privilege level 15
+ logging synchronous
+ stopbits 1
+line aux 0
+ exec-timeout 0 0
+ privilege level 15
+ --More--          logging synchronous
+ stopbits 1
+line vty 0 4
+ login
+!
+!
+end
+
+R1#show running-config
+Building configuration...
+
+Current configuration : 924 bytes
+!
+version 12.4
+service timestamps debug datetime msec
+service timestamps log datetime msec
+no service password-encryption
+!
+hostname R1
+!
+boot-start-marker
+boot-end-marker
+!
+!
+no aaa new-model
+!
+resource policy
+!
+ip subnet-zero
+no ip icmp rate-limit unreachable
+ip cef
+ip tcp synwait-time 5
+!
+ --More--         !
+no ip dhcp use vrf connected
+!
+!
+no ip domain lookup
+no ip ips deny-action ips-interface
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+! 
+ --More--         !
+!
+!
+!
+interface FastEthernet0/0
+ no ip address
+ shutdown
+ duplex auto
+ speed auto
+!
+interface FastEthernet0/1
+ no ip address
+ shutdown
+ duplex auto
+ speed auto
+!
+ip classless
+no ip http server
+no ip http secure-server
+!
+!
+!
+no cdp log mismatch duplex
+ --More--         !
+!
+!
+!
+control-plane
+!
+!
+!
+!
+!
+!
+gatekeeper
+ shutdown
+!
+!
+line con 0
+ exec-timeout 0 0
+ privilege level 15
+ logging synchronous
+ stopbits 1
+line aux 0
+ exec-timeout 0 0
+ privilege level 15
+ --More--          logging synchronous
+ stopbits 1
+line vty 0 4
+ login
+!
+!
+end
+
+R1#  show running-config
+Building configuration...
+
+Current configuration : 924 bytes
+!
+version 12.4
+service timestamps debug datetime msec
+service timestamps log datetime msec
+no service password-encryption
+!
+hostname R1
+!
+boot-start-marker
+boot-end-marker
+!
+!
+no aaa new-model
+!
+resource policy
+!
+ip subnet-zero
+no ip icmp rate-limit unreachable
+ip cef
+ip tcp synwait-time 5
+!
+ --More--         
+R1#how running-config
+    ^
+% Invalid input detected at '^' marker.
+
+R1#show running-config
+Building configuration...
+
+Current configuration : 924 bytes
+!
+version 12.4
+service timestamps debug datetime msec
+service timestamps log datetime msec
+no service password-encryption
+!
+hostname R1
+!
+boot-start-marker
+boot-end-marker
+!
+!
+no aaa new-model
+!
+resource policy
+!
+ip subnet-zero
+no ip icmp rate-limit unreachable
+ip cef
+ip tcp synwait-time 5
+!
+ --More--         
+R1#how running-config
+    ^
+% Invalid input detected at '^' marker.
+
+R1#show running-config
+Building configuration...
+
+Current configuration : 924 bytes
+!
+version 12.4
+service timestamps debug datetime msec
+service timestamps log datetime msec
+no service password-encryption
+!
+hostname R1
+!
+boot-start-marker
+boot-end-marker
+!
+!
+no aaa new-model
+!
+resource policy
+!
+ip subnet-zero
+no ip icmp rate-limit unreachable
+ip cef
+ip tcp synwait-time 5
+!
+ --More--         
+R1#how running-config
+    ^
+% Invalid input detected at '^' marker.
+
+R1#show running-config
+Building configuration...
+
+Current configuration : 924 bytes
+!
+version 12.4
+service timestamps debug datetime msec
+service timestamps log datetime msec
+no service password-encryption
+!
+hostname R1
+!
+boot-start-marker
+boot-end-marker
+!
+!
+no aaa new-model
+!
+resource policy
+!
+ip subnet-zero
+no ip icmp rate-limit unreachable
+ip cef
+ip tcp synwait-time 5
+!
+ --More--         
+R1#onf
+Translating "onf"
+
+Translating "onf"
+% Unknown command or computer name, or unable to find computer address
+R1#conf
+Configuring from terminal, memory, or network [terminal]? 
+Enter configuration commands, one per line.  End with CNTL/Z.
+R1(config)#
+R1(config)#exir t
+R1#
+*Jul  5 17:30:49.031: %SYS-5-CONFIG_I: Configured from console by console
+R1#conf
+Configuring from terminal, memory, or network [terminal]? 

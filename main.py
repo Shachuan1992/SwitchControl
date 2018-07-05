@@ -13,10 +13,11 @@ from commands import *
 host = '127.0.0.1'
 port = 5000
 
+command_list = ['conf','terminal','exit']
 tn = telnetlib.Telnet(host,port=port)
-write_command(tn,'conf')
-time.sleep(2)
-write_command(tn,'terminal')
-time.sleep(2)
-write_command(tn,'exit')
+
+for command in command_list:
+    write_command(tn,command)
+    time.sleep(2)
+
 result = tn.read_very_eager().decode()

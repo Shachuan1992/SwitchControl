@@ -9,15 +9,12 @@
 """
 __author__ = 'shachuan'
 
+from telnet import *
 
-import telnetlib
-import time
-from commands import *
-from excel_control import *
-
-
+file = 'test.xls'
 port_office = 8000
 port_home = 2001
 
+account = input('请输入要查询的宽带账号\n')
 
-Telnet_Switch()
+Telnet_Switch(file,account)

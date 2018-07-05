@@ -9,12 +9,14 @@ __author__ = 'shachuan'
 import telnetlib
 import time
 from commands import *
+from excel_control import *
 
 host = '127.0.0.1'
-port = 5000
+port_office = 8000
+port_home = 2001
 
 command_list = ['conf','terminal','exit']
-tn = telnetlib.Telnet(host,port=port)
+tn = telnetlib.Telnet(host,port=port_home)
 
 for command in command_list:
     write_command(tn,command)

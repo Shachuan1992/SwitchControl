@@ -17,5 +17,5 @@ port_home = 2001
 
 account = input('请输入要查询的宽带账号\n')
 
-telnet_switch(file,account)
-read_excel(file)
+get_info(file,account)
+telnet()

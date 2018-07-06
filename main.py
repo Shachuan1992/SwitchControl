@@ -12,9 +12,10 @@ __author__ = 'shachuan'
 from telnet import *
 
 file = 'test.xls'
-port_office = 8000
+port_office = 5000
 port_home = 2001
 
 account = input('请输入要查询的宽带账号\n')
 
 telnet_switch(file,account)
+read_excel(file)

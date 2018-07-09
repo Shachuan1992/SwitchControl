@@ -86,10 +86,4 @@ def telnet():
         RxPower = RxOptical.group(1).rstrip('(dbm)')
         print("光衰值：" + RxPower+'\n')
 
-    #在线命令调试
-    # x1 = True
-    # while x1 != 'Q':
-    #     x1 = input()
-    #     write_command(tn,x1)
-    #     time.sleep(0.5)
-    #     print(str(tn.read_very_eager(), encoding='utf-8'))
+

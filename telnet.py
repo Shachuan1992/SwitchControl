@@ -1,4 +1,3 @@
-import xlwt
 import xlrd
 import pandas as pd
 import re
@@ -52,9 +51,16 @@ def get_info(file,account):
 def command_make(Device):
     global commands
     commands = []
-    if (Device == 'MA5683T') or (Device == 'MA5680T'):
+    if Device == 'MA5680T':
         commands.append('lyread')
-        commands.append('read123')
+        commands.append('read1234')
+        commands.append('enable')
+        commands.append('config')
+        commands.append('interface epon ' + SLOT + '/' + BOARD)
+        commands.append('display ont optical-info ' + PORT + ' ' + ONU_ID)
+    elif Device == 'MA5683T':
+        commands.append('lyread')
+        commands.append('read1234')
         commands.append('enable')
         commands.append('config')
         commands.append('interface epon ' + SLOT + '/' + BOARD)
@@ -68,19 +74,26 @@ def command_make(Device):
 
 def telnet():
 
-    tn = telnetlib.Telnet(host=IP, port=5000)   # 开启Telnet
+    tn = telnetlib.Telnet(host=IP, port=23)   # 开启Telnet
 
     command_make(Device=DEVICE_ID)            # 根据设备型号，制作命令
     # 输入命令并执行
     for command in commands:
+        time.sleep(1)
         write_command(tn,command)
-        time.sleep(0.5)
+    time.sleep(2)
     reply = (str(tn.read_very_eager(),encoding='utf-8'))
-    if (DEVICE_ID == 'MA5683T') or (DEVICE_ID == 'MA5683T'):
+    print(reply)
+    if DEVICE_ID == 'MA5680T':
         sample = reply.replace('(', '').replace(')', '')
         RxOptical = re.search(r"^\s+Rx optical powerdBm\s+:(.+)$", sample, re.M)
         RxPower = RxOptical.group(1).lstrip(' ')
         print("光衰值："+RxPower+'\n')
+    elif DEVICE_ID == 'MA5683T':
+        sample = reply.replace('(', '').replace(')', '')
+        RxOptical = re.search(r"^\s+Rx optical powerdBm\s+:(.+)$", sample, re.M)
+        RxPower = RxOptical.group(1).lstrip(' ')
+        print("光衰值：" + RxPower + '\n')
     else:
         RxOptical = re.search(r"^epon-onu_\d/\d/\d:\d\s+(.+)$",reply,re.M)
         RxPower = RxOptical.group(1).rstrip('(dbm)')

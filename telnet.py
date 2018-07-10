@@ -3,6 +3,7 @@ import pandas as pd
 import re
 import telnetlib
 import time
+import os
 
 def write_command(instance,command):
     finish = '\r'
@@ -65,6 +66,8 @@ def command_make(Device):
         commands.append('display ont optical-info ' + PORT + ' ' + ONU_ID)
     elif Device == 'C300':
         commands.append('show pon power onu-rx epon-onu_'+PON+':'+ONU_ID)
+    # elif Device == 'C220':
+    #     commands.append('show pon power onu-rx epon-onu_'+PON+':'+ONU_ID)
     else:
         print("错误！！！没有这种设备，联系57591添加命令")
 
@@ -80,19 +83,35 @@ def telnet():
         write_command(tn,command)
     time.sleep(2)
     reply = (str(tn.read_very_eager(),encoding='utf-8'))
+    print(reply)
+    sample = reply.replace('(', '').replace(')', '')
     if DEVICE_ID == 'MA5680T':
-        sample = reply.replace('(', '').replace(')', '')
         RxOptical = re.search(r"^\s+Rx optical powerdBm\s+:(.+)$", sample, re.M)
         RxPower = RxOptical.group(1).lstrip(' ')
         print("光衰值："+RxPower+'\n')
     elif DEVICE_ID == 'MA5683T':
-        sample = reply.replace('(', '').replace(')', '')
         RxOptical = re.search(r"^\s+Rx optical powerdBm\s+:(.+)$", sample, re.M)
         RxPower = RxOptical.group(1).lstrip(' ')
         print("光衰值：" + RxPower + '\n')
     else:
         RxOptical = re.search(r"^epon-onu_\d/\d/\d:\d{1,3}\s+(.+)$",reply,re.M)
-        RxPower = RxOptical.group(1).rstrip('(dbm)')#replace??
+        RxPower = RxOptical.group(1).replace('(dbm)','')
         print("光衰值：" + RxPower+'\n')
     tn.close()
 
+
+def scan_files(directory, prefix=None, postfix=None):
+    files_list = []
+
+    for root, sub_dirs, files in os.walk(directory):
+        for special_file in files:
+            if postfix:
+                if special_file.endswith(postfix):
+                    files_list.append(os.path.join(root, special_file))
+            elif prefix:
+                if special_file.startswith(prefix):
+                    files_list.append(os.path.join(root, special_file))
+            else:
+                files_list.append(os.path.join(root, special_file))
+
+    return files_list

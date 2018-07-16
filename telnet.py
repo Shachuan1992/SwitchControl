@@ -59,8 +59,8 @@ def command_make(Device):
         commands = [user, password,'enable','config','interface epon ' +SLOT + '/' + BOARD,'display ont optical-info ' + PORT + ' ' + ONU_ID]
     elif Device == 'C300':
         commands = [user,password,'show pon power onu-rx epon-onu_'+PON+':'+ONU_ID]
-    # elif Device == 'C220':
-    #     commands.append('show pon power onu-rx epon-onu_'+PON+':'+ONU_ID)
+    elif Device == 'C220':#命令不对
+        commands = [user, password, 'show pon power onu-rx epon-onu_' + PON + ':' + ONU_ID]
     else:
         print("错误！！！没有这种设备，联系57591添加命令")
     return commands
@@ -80,20 +80,25 @@ def telnet():
             write_command(tn,command)
         time.sleep(2)
         reply = (str(tn.read_very_eager(),encoding='utf-8'))
-        print(reply)
-        sample = reply.replace('(', '').replace(')', '')
-        if DEVICE_ID == 'MA5680T':
-            RxOptical = re.search(r"^\s+Rx optical powerdBm\s+:(.+)$", sample, re.M)
-            RxPower = RxOptical.group(1).lstrip(' ')
-            print("光衰值："+RxPower+'\n')
-        elif DEVICE_ID == 'MA5683T':
-            RxOptical = re.search(r"^\s+Rx optical powerdBm\s+:(.+)$", sample, re.M)
-            RxPower = RxOptical.group(1).lstrip(' ')
-            print("光衰值：" + RxPower + '\n')
+        state = re.search(r"^\s+Failure:(.+)$",reply,re.M)
+        error_code = state.group(1).lstrip(' ')
+        print(error_code)
+        if error_code == "The ONT is not online":
+            print("光猫未上线\n")
         else:
-            RxOptical = re.search(r"^epon-onu_\d/\d/\d:\d{1,3}\s+(.+)$",reply,re.M)
-            RxPower = RxOptical.group(1).replace('(dbm)','')
-            print("光衰值：" + RxPower+'\n')
+            sample = reply.replace('(', '').replace(')', '')
+            if DEVICE_ID == 'MA5680T':
+                RxOptical = re.search(r"^\s+Rx optical powerdBm\s+:(.+)$", sample, re.M)
+                RxPower = RxOptical.group(1).lstrip(' ')
+                print("光衰值："+RxPower+'\n')
+            elif DEVICE_ID == 'MA5683T':
+                RxOptical = re.search(r"^\s+Rx optical powerdBm\s+:(.+)$", sample, re.M)
+                RxPower = RxOptical.group(1).lstrip(' ')
+                print("光衰值：" + RxPower + '\n')
+            else:
+                RxOptical = re.search(r"^epon-onu_\d/\d/\d:\d{1,3}\s+(.+)$",reply,re.M)
+                RxPower = RxOptical.group(1).replace('(dbm)','')
+                print("光衰值：" + RxPower+'\n')
         tn.close()
 
 

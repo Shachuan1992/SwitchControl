@@ -34,7 +34,7 @@ def write_command(instance,command):
 
 
 
-#从光衰表中获取OLTP的IP，设备型号Device_ID，PON_PORT以及ONU_IDP
+#从光衰表中获取OLT的IP，设备型号Device_ID，PON口以及ONU_ID
 def get_info(file,account):
     global IP,DEVICE_ID,ONU_ID,PON,SLOT,BOARD,PORT#声明全局变量
     df = pd.read_excel(file,'光衰清单')#打开光衰表文件
@@ -50,59 +50,55 @@ def get_info(file,account):
 
 
 def command_make(Device):
-    global commands
     user = 'lyread'
     password = 'read1234'
-    commands = [user,password]
+    commands = []
     if Device == 'MA5680T':
-        commands.append('enable')
-        commands.append('config')
-        commands.append('interface epon ' + SLOT + '/' + BOARD)
-        commands.append('display ont optical-info ' + PORT + ' ' + ONU_ID)
+        commands = [user,password,'enable','config','interface epon ' + SLOT + '/' + BOARD,'display ont optical-info ' + PORT + ' ' + ONU_ID]
     elif Device == 'MA5683T':
-        commands.append('enable')
-        commands.append('config')
-        commands.append('interface epon ' + SLOT + '/' + BOARD)
-        commands.append('display ont optical-info ' + PORT + ' ' + ONU_ID)
+        commands = [user, password,'enable','config','interface epon ' +SLOT + '/' + BOARD,'display ont optical-info ' + PORT + ' ' + ONU_ID]
     elif Device == 'C300':
-        commands.append('show pon power onu-rx epon-onu_'+PON+':'+ONU_ID)
+        commands = [user,password,'show pon power onu-rx epon-onu_'+PON+':'+ONU_ID]
     # elif Device == 'C220':
     #     commands.append('show pon power onu-rx epon-onu_'+PON+':'+ONU_ID)
     else:
         print("错误！！！没有这种设备，联系57591添加命令")
-
+    return commands
 
 
 def telnet():
-    tn = telnetlib.Telnet(host=IP, port=23,timeout=10)   # 开启Telnet
-    command_make(Device=DEVICE_ID)            # 根据设备型号，制作命令
-    print('努力查询中，请稍后......\n')
-    # 输入命令并执行
-    for command in commands:
-        time.sleep(0.5)
-        write_command(tn,command)
-    time.sleep(2)
-    reply = (str(tn.read_very_eager(),encoding='utf-8'))
-    print(reply)
-    sample = reply.replace('(', '').replace(')', '')
-    if DEVICE_ID == 'MA5680T':
-        RxOptical = re.search(r"^\s+Rx optical powerdBm\s+:(.+)$", sample, re.M)
-        RxPower = RxOptical.group(1).lstrip(' ')
-        print("光衰值："+RxPower+'\n')
-    elif DEVICE_ID == 'MA5683T':
-        RxOptical = re.search(r"^\s+Rx optical powerdBm\s+:(.+)$", sample, re.M)
-        RxPower = RxOptical.group(1).lstrip(' ')
-        print("光衰值：" + RxPower + '\n')
+    try:
+        tn = telnetlib.Telnet(host=IP, port=23,timeout=10)   # 尝试开启Telnet Socket
+    except ConnectionRefusedError:
+        print("错误！！！目标计算机连接超时，请检查链路是否正常！")
     else:
-        RxOptical = re.search(r"^epon-onu_\d/\d/\d:\d{1,3}\s+(.+)$",reply,re.M)
-        RxPower = RxOptical.group(1).replace('(dbm)','')
-        print("光衰值：" + RxPower+'\n')
-    tn.close()
+        commands = command_make(Device=DEVICE_ID)            # 根据设备型号制作命令
+        print('努力查询中，请稍后......\n')
+        # 输入命令并执行
+        for command in commands:
+            time.sleep(0.5)
+            write_command(tn,command)
+        time.sleep(2)
+        reply = (str(tn.read_very_eager(),encoding='utf-8'))
+        print(reply)
+        sample = reply.replace('(', '').replace(')', '')
+        if DEVICE_ID == 'MA5680T':
+            RxOptical = re.search(r"^\s+Rx optical powerdBm\s+:(.+)$", sample, re.M)
+            RxPower = RxOptical.group(1).lstrip(' ')
+            print("光衰值："+RxPower+'\n')
+        elif DEVICE_ID == 'MA5683T':
+            RxOptical = re.search(r"^\s+Rx optical powerdBm\s+:(.+)$", sample, re.M)
+            RxPower = RxOptical.group(1).lstrip(' ')
+            print("光衰值：" + RxPower + '\n')
+        else:
+            RxOptical = re.search(r"^epon-onu_\d/\d/\d:\d{1,3}\s+(.+)$",reply,re.M)
+            RxPower = RxOptical.group(1).replace('(dbm)','')
+            print("光衰值：" + RxPower+'\n')
+        tn.close()
 
 
 def scan_files(directory, prefix=None, postfix=None):
     files_list = []
-
     for root, sub_dirs, files in os.walk(directory):
         for special_file in files:
             if postfix:
@@ -113,5 +109,4 @@ def scan_files(directory, prefix=None, postfix=None):
                     files_list.append(os.path.join(root, special_file))
             else:
                 files_list.append(os.path.join(root, special_file))
-
     return files_list

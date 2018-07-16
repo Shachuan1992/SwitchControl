@@ -15,6 +15,8 @@
     update:2018/7/10
                 1、加入了文件判断函数，在执行查询操作前会查看当前目录是否存在xlsx后缀的文件，若存在的话会默认当成光衰报表并自动获取文件
                 名。综合考虑没有使用if-else，而是使用了try-except语句，更专业。
+    update:2018/7/16
+                1、做了登录检测及文件检测，要是没找到正确的sheet名会返回错误，要是登录超时也会返回错误信息，但不会终止程序的执行
 """
 __author__ = 'shachuan'
 
@@ -31,8 +33,15 @@ while True:
             print('谢谢使用')
             break
         else:
-            get_info(file_name, account)
-            telnet()
+            try:
+                get_info(file_name, account)
+            except xlrd.biffh.XLRDError:
+                print("错误！！！没有找到光衰清单的sheet，请打开光衰报表文件并修改sheet名为'光衰清单'\n")
+                break
+            except AttributeError:
+                print("错误！！！宽带账号输入错误，请重新输入\n")
+            else:
+                telnet()
     except IndexError:
         print("错误！！！没有找到光衰文件！！！\n"
               "请确认光衰报表是否存在，并且目录下不要有多个excel文件,excel扩展名要用xlsx格式\n")

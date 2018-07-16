@@ -80,12 +80,9 @@ def telnet():
             write_command(tn,command)
         time.sleep(2)
         reply = (str(tn.read_very_eager(),encoding='utf-8'))
-        state = re.search(r"^\s+Failure:(.+)$",reply,re.M)
-        error_code = state.group(1).lstrip(' ')
-        print(error_code)
-        if error_code == "The ONT is not online":
-            print("光猫未上线\n")
-        else:
+        #通过正则表达式，判断ONU上线情况。可以精确判断，但是只需要考虑这一种条件，即ONU not online
+        #所以只提取failure
+        if (re.search(r"^\s+Failure:(.+)$",reply,re.M)) == None:
             sample = reply.replace('(', '').replace(')', '')
             if DEVICE_ID == 'MA5680T':
                 RxOptical = re.search(r"^\s+Rx optical powerdBm\s+:(.+)$", sample, re.M)
@@ -99,6 +96,8 @@ def telnet():
                 RxOptical = re.search(r"^epon-onu_\d/\d/\d:\d{1,3}\s+(.+)$",reply,re.M)
                 RxPower = RxOptical.group(1).replace('(dbm)','')
                 print("光衰值：" + RxPower+'\n')
+        else:
+            print("ONU未上线\n")
         tn.close()
 
 

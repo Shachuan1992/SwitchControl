@@ -50,8 +50,8 @@ def get_info(file,account):
 
 
 def command_make(Device):
-    user = 'lyread'
-    password = 'read1234'
+    user = '******'
+    password = '******'
     commands = []
     if Device == 'MA5680T':
         commands = [user,password,'enable','config','interface epon ' + SLOT + '/' + BOARD,'display ont optical-info ' + PORT + ' ' + ONU_ID]
